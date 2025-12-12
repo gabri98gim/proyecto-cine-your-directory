@@ -1,0 +1,103 @@
+---
+const logoPath = '/fondo header blanco.png';
+const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/diary', label: 'Diario' },
+    { href: '/lists', label: 'Listas' },
+    { href: '/community', label: 'Comunidad' },
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/locations', label: 'Mapa' },
+    { href: '/about', label: 'Acerca' },
+    { href: '/contact', label: 'Contacto' },
+];
+---
+
+<header class="sticky top-0 z-50 bg-[#14181c] border-b border-gray-800 shadow-xl">
+    <nav class="container mx-auto px-4 h-16 flex items-center justify-between gap-6">
+        
+        <!-- Logo -->
+        <a href="/" class="flex items-center shrink-0">
+            <img src={logoPath} alt="Your Directory Logo" class="h-6 w-auto" />
+        </a>
+
+        <!-- Enlaces de navegación - centrados y con espacio -->
+        <div class="hidden lg:flex items-center gap-5 text-sm font-medium flex-1 justify-center">
+            {navLinks.map(link => (
+                <a 
+                    href={link.href} 
+                    class="text-gray-300 hover:text-white transition duration-150 whitespace-nowrap"
+                >
+                    {link.label}
+                </a>
+            ))}
+        </div>
+
+        <!-- Barra de búsqueda - derecha (ahora funcional) -->
+        <div class="hidden md:block shrink-0" style="width: 280px;">
+            <form action="/search" method="get" class="relative">
+                <input 
+                    type="search" 
+                    name="q"
+                    placeholder="Buscar películas, series, listas..." 
+                    class="w-full py-2 pl-10 pr-4 rounded-full bg-[#2c3440] text-gray-200 border border-gray-700 focus:outline-none focus:border-gray-500 text-sm placeholder-gray-500"
+                />
+                <button type="submit" class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                    <svg class="h-4 w-4 text-gray-500 hover:text-gray-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Botón de menú móvil -->
+        <button id="mobile-menu-btn" class="lg:hidden text-white hover:text-gray-300 focus:outline-none">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Menú móvil (desplegable) -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#2c3440] border-t border-gray-700">
+        <div class="container mx-auto px-4 py-4 space-y-2">
+            <!-- Búsqueda móvil -->
+            <form action="/search" method="get" class="mb-4">
+                <div class="relative">
+                    <input 
+                        type="search" 
+                        name="q"
+                        placeholder="Buscar..." 
+                        class="w-full py-2 pl-10 pr-4 rounded-full bg-[#14181c] text-gray-200 border border-gray-700 focus:outline-none focus:border-gray-500 text-sm placeholder-gray-500"
+                    />
+                    <button type="submit" class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Enlaces móviles -->
+            {navLinks.map(link => (
+                <a 
+                    href={link.href} 
+                    class="block text-gray-300 hover:text-white hover:bg-[#14181c] px-3 py-2 rounded transition duration-150"
+                >
+                    {link.label}
+                </a>
+            ))}
+        </div>
+    </div>
+</header>
+
+<script>
+    // Toggle menú móvil
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+</script>

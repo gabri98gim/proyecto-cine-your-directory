@@ -1,0 +1,295 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout title="Contacto - Your Directory">
+  <Navbar />
+  <div class="min-h-screen py-12 px-4">
+    <div class="container mx-auto max-w-6xl">
+      
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+          Contacta con Nosotros
+        </h1>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+          ¿Tienes alguna pregunta, sugerencia o quieres reportar un problema? 
+          Estamos aquí para ayudarte.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        
+        <!-- Formulario -->
+        <div class="bg-[#2c3440] rounded-lg p-8 shadow-xl">
+          <h2 class="text-2xl font-bold text-white mb-6">Envíanos un mensaje</h2>
+          
+          <form id="contactForm" class="space-y-6">
+            
+            <!-- Nombre -->
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
+                Nombre completo *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                class="w-full px-4 py-3 bg-[#14181c] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-purple-light transition duration-150"
+                placeholder="Tu nombre"
+              />
+              <span class="text-red-400 text-sm hidden" id="nameError"></span>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                Email *
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-3 bg-[#14181c] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-purple-light transition duration-150"
+                placeholder="tu@email.com"
+              />
+              <span class="text-red-400 text-sm hidden" id="emailError"></span>
+            </div>
+
+            <!-- Asunto -->
+            <div>
+              <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">
+                Asunto *
+              </label>
+              <select
+                id="subject"
+                name="subject"
+                required
+                class="w-full px-4 py-3 bg-[#14181c] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-accent-purple-light transition duration-150"
+              >
+                <option value="">Selecciona un tema</option>
+                <option value="sugerencia">Sugerencia</option>
+                <option value="problema">Reportar un problema</option>
+                <option value="pregunta">Pregunta general</option>
+                <option value="otro">Otro</option>
+              </select>
+              <span class="text-red-400 text-sm hidden" id="subjectError"></span>
+            </div>
+
+            <!-- Mensaje -->
+            <div>
+              <label for="message" class="block text-sm font-medium text-gray-300 mb-2">
+                Mensaje *
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                required
+                class="w-full px-4 py-3 bg-[#14181c] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-purple-light transition duration-150 resize-none"
+                placeholder="Escribe tu mensaje aquí..."
+              ></textarea>
+              <span class="text-red-400 text-sm hidden" id="messageError"></span>
+            </div>
+
+            <!-- Botón de envío -->
+            <button
+              type="submit"
+              class="w-full bg-accent-purple-dark hover:bg-accent-purple-light text-white font-bold py-3 px-6 rounded-lg transition duration-150 transform hover:scale-105"
+            >
+              Enviar mensaje
+            </button>
+
+            <!-- Mensaje de feedback -->
+            <div id="feedback" class="hidden p-4 rounded-lg text-center font-medium"></div>
+          </form>
+        </div>
+
+        <!-- Información de contacto y sugerencias -->
+        <div class="space-y-6">
+          
+          <!-- Tarjeta de información -->
+          <div class="bg-[#2c3440] rounded-lg p-6 shadow-xl">
+            <h3 class="text-xl font-bold text-white mb-4">Información</h3>
+            <div class="space-y-4 text-gray-300">
+              <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-accent-purple-light shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <div>
+                  <p class="font-medium text-white">Email</p>
+                  <p class="text-sm">contact@yourdirectory.com</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-accent-purple-light shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                  <p class="font-medium text-white">Horario de atención</p>
+                  <p class="text-sm">Lunes a Viernes: 9:00 - 18:00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta de FAQ rápido -->
+          <div class="bg-[#2c3440] rounded-lg p-6 shadow-xl">
+            <h3 class="text-xl font-bold text-white mb-4">Preguntas frecuentes</h3>
+            <div class="space-y-3 text-gray-300 text-sm">
+              <div>
+                <p class="font-medium text-white">¿Cómo creo una lista?</p>
+                <p>Ve a la sección "Listas" y haz clic en "Crear nueva lista".</p>
+              </div>
+              <div>
+                <p class="font-medium text-white">¿Puedo exportar mi diario?</p>
+                <p>Actualmente estamos trabajando en esta función.</p>
+              </div>
+              <div>
+                <p class="font-medium text-white">¿Los datos son públicos?</p>
+                <p>Tus listas y calificaciones son privadas por defecto.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta de redes sociales -->
+          <div class="bg-[#2c3440] rounded-lg p-6 shadow-xl">
+            <h3 class="text-xl font-bold text-white mb-4">Síguenos</h3>
+            <div class="flex gap-4">
+             <a 
+  href="https://github.com/gabri98gim" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  class="w-10 h-10 bg-[#14181c] rounded-full flex items-center justify-center hover:bg-accent-purple-light transition duration-150"
+>
+  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+</a>
+
+<a 
+  href="https://github.com/gabri98gim" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  class="w-10 h-10 bg-[#14181c] rounded-full flex items-center justify-center hover:bg-accent-purple-light transition duration-150"
+>
+  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+  </svg>
+</a>
+
+<a 
+  href="https://github.com/gabri98gim" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  class="w-10 h-10 bg-[#14181c] rounded-full flex items-center justify-center hover:bg-accent-purple-light transition duration-150"
+>
+  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </svg>
+</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('contactForm') as HTMLFormElement;
+  const feedback = document.getElementById('feedback') as HTMLDivElement;
+
+  // Función para mostrar errores
+  function showError(fieldId: string, message: string) {
+    const errorElement = document.getElementById(`${fieldId}Error`);
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.classList.remove('hidden');
+    }
+  }
+
+  // Función para limpiar errores
+  function clearErrors() {
+    const errorElements = document.querySelectorAll('[id$="Error"]');
+    errorElements.forEach(el => el.classList.add('hidden'));
+  }
+
+  // Función para validar email
+  function isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  // Validación del formulario
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const name = (document.getElementById('name') as HTMLInputElement).value.trim();
+    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+    const subject = (document.getElementById('subject') as HTMLSelectElement).value;
+    const message = (document.getElementById('message') as HTMLTextAreaElement).value.trim();
+
+    let isValid = true;
+
+    // Validar nombre
+    if (name.length < 2) {
+      showError('name', 'El nombre debe tener al menos 2 caracteres');
+      isValid = false;
+    }
+
+    // Validar email
+    if (!isValidEmail(email)) {
+      showError('email', 'Por favor, introduce un email válido');
+      isValid = false;
+    }
+
+    // Validar asunto
+    if (!subject) {
+      showError('subject', 'Por favor, selecciona un asunto');
+      isValid = false;
+    }
+
+    // Validar mensaje
+    if (message.length < 10) {
+      showError('message', 'El mensaje debe tener al menos 10 caracteres');
+      isValid = false;
+    }
+
+    // Si todo es válido, mostrar mensaje de éxito
+    if (isValid) {
+      feedback.textContent = '¡Mensaje enviado con éxito! Te responderemos pronto.';
+      feedback.className = 'p-4 rounded-lg text-center font-medium bg-green-900 text-green-200 border border-green-700';
+      feedback.classList.remove('hidden');
+
+      // Limpiar formulario
+      form.reset();
+
+      // Ocultar mensaje después de 5 segundos
+      setTimeout(() => {
+        feedback.classList.add('hidden');
+      }, 5000);
+    } else {
+      feedback.textContent = 'Por favor, corrige los errores en el formulario.';
+      feedback.className = 'p-4 rounded-lg text-center font-medium bg-red-900 text-red-200 border border-red-700';
+      feedback.classList.remove('hidden');
+    }
+  });
+
+  // Limpiar error al escribir
+  const inputs = form.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    input.addEventListener('input', () => {
+      const errorElement = document.getElementById(`${input.id}Error`);
+      if (errorElement) {
+        errorElement.classList.add('hidden');
+      }
+    });
+  });
+</script>

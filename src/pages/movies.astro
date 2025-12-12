@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MovieCard from '../components/MovieCard.astro';
+import { getPopularMovies, getTopRatedMovies, getNowPlayingMovies } from '../services/tmdb';
+
+// Obtener la API Key desde las variables de entorno
+const TMDB_API_KEY = import.meta.env.PUBLIC_TMDB_API_KEY;
+
+// Obtener películas de diferentes categorías
+const popularMovies = await getPopularMovies(TMDB_API_KEY);
+const topRatedMovies = await getTopRatedMovies(TMDB_API_KEY);
+const nowPlayingMovies = await getNowPlayingMovies(TMDB_API_KEY);
+---
+
+<Layout title="Películas - Your Directory">
+  <div class="min-h-screen py-12 px-4">
+    <div class="container mx-auto max-w-7xl">
+      
+      <!-- Header -->
+      <div class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+          Explora Películas
+        </h1>
+        <p class="text-gray-400 text-lg">
+          Descubre, califica y organiza tus películas favoritas
+        </p>
+      </div>
+
+      <!-- En Cartelera -->
+      <section class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-white">En Cartelera</h2>
+          <a href="#" class="text-accent-purple-light hover:text-accent-purple-dark text-sm font-medium">
+            Ver todas →
+          </a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {nowPlayingMovies.results.slice(0, 12).map(movie => (
+            <MovieCard
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.poster_path}
+              releaseDate={movie.release_date}
+              voteAverage={movie.vote_average}
+            />
+          ))}
+        </div>
+      </section>
+
+      <!-- Películas Populares -->
+      <section class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-white">Populares</h2>
+          <a href="#" class="text-accent-purple-light hover:text-accent-purple-dark text-sm font-medium">
+            Ver todas →
+          </a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {popularMovies.results.slice(0, 12).map(movie => (
+            <MovieCard
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.poster_path}
+              releaseDate={movie.release_date}
+              voteAverage={movie.vote_average}
+            />
+          ))}
+        </div>
+      </section>
+
+      <!-- Mejor Valoradas -->
+      <section class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-white">Mejor Valoradas</h2>
+          <a href="#" class="text-accent-purple-light hover:text-accent-purple-dark text-sm font-medium">
+            Ver todas →
+          </a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {topRatedMovies.results.slice(0, 12).map(movie => (
+            <MovieCard
+              id={movie.id}
+              title={movie.title}
+              posterPath={movie.poster_path}
+              releaseDate={movie.release_date}
+              voteAverage={movie.vote_average}
+            />
+          ))}
+        </div>
+      </section>
+
+      <!-- Filtros y Búsqueda (opcional para después) -->
+      <section class="bg-[#2c3440] rounded-lg p-8 mb-12">
+        <h2 class="text-xl font-bold text-white mb-4">Explorar por género</h2>
+        <div class="flex flex-wrap gap-2">
+          {['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia Ficción', 'Romance', 'Animación', 'Documental'].map(genre => (
+            <button class="px-4 py-2 bg-[#14181c] text-gray-300 rounded-full hover:bg-accent-purple-dark hover:text-white transition duration-150 text-sm">
+              {genre}
+            </button>
+          ))}
+        </div>
+      </section>
+
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Animación suave al cargar */
+  .grid > * {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

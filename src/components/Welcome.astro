@@ -1,0 +1,212 @@
+---
+// src/components/Welcome.astro
+const { movies } = Astro.props;
+const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w300';
+---
+
+<section class="min-h-screen flex flex-col justify-center items-center py-20 px-4">
+    
+    <div class="text-center mb-16 max-w-3xl">
+        <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+            Bienvenido a <span class="text-[#ba87d0]">Your Directory</span>
+        </h1>
+        <p class="text-gray-400 text-lg md:text-xl mb-8">
+            Tu espacio personal para descubrir, catalogar y puntuar el cine que te apasiona.
+        </p>
+
+        <a 
+            href="/diary" 
+            class="inline-block px-8 py-3 rounded-full bg-[#ba87d0] text-[#14181c] font-bold text-lg hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(186,135,208,0.3)]"
+        >
+            Ir a mi Diario
+        </a>
+    </div>
+
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold text-white mb-8 border-l-4 border-[#00E054] pl-4">
+            Tendencias de la Semana
+        </h2>
+
+        <div class="movie-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {movies.map((movie) => (
+                <div class="movie-card opacity-0 translate-y-24 relative rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group bg-[#1B2228]">
+                    <a 
+                        href={`/movie/${movie.id}`} 
+                        class="block relative"
+                    >
+                        <div class="aspect-2/3 overflow-hidden">
+                            <img 
+                                src={movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : '/placeholder.jpg'} 
+                                alt={movie.title} 
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                                loading="lazy"
+                            />
+                        </div>
+
+                        <div class="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 pointer-events-none">
+                            <h3 class="text-white font-bold text-sm leading-tight mb-1">{movie.title}</h3>
+                            <div class="flex items-center space-x-1 text-[#00E054] text-xs font-bold">
+                                <span>★</span>
+                                <span>{movie.vote_average.toFixed(1)}</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Quick Actions -->
+                    <div class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2 z-10">
+                        <button 
+                            class="action-btn bg-black bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition-all duration-150"
+                            title="Agregar a lista"
+                            data-movie-id={movie.id}
+                            data-movie-title={movie.title}
+                            data-movie-poster={movie.poster_path}
+                            data-movie-date={movie.release_date}
+                            data-movie-rating={movie.vote_average}
+                            data-action="add-to-list"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </button>
+                        <button 
+                            class="action-btn bg-black bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition-all duration-150"
+                            title="Marcar como vista"
+                            data-movie-id={movie.id}
+                            data-movie-title={movie.title}
+                            data-movie-poster={movie.poster_path}
+                            data-movie-date={movie.release_date}
+                            data-movie-rating={movie.vote_average}
+                            data-action="mark-as-watched"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+
+</section>
+
+<style>
+    .action-btn:hover {
+        transform: scale(1.1);
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    ScrollTrigger.batch(".movie-card", {
+        start: "top 85%",
+        onEnter: (batch) => {
+            gsap.to(batch, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power2.out",
+                overwrite: true
+            });
+        },
+    });
+
+    interface MovieData {
+        id: number;
+        title: string;
+        poster_path: string;
+        release_date: string;
+        vote_average: number;
+    }
+
+    interface DiaryEntry {
+        id: number;
+        movieId: number;
+        title: string;
+        posterPath: string;
+        releaseDate: string;
+        watchedDate: string;
+        rating: number;
+        review: string;
+        liked: boolean;
+    }
+
+    // Funcionalidad de los botones
+    document.addEventListener('click', async (e: Event) => {
+        const target = e.target as HTMLElement;
+        const button = target.closest('[data-action]') as HTMLButtonElement | null;
+        if (!button) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const action = button.dataset.action;
+        const movieData: MovieData = {
+            id: parseInt(button.dataset.movieId || '0'),
+            title: button.dataset.movieTitle || '',
+            poster_path: button.dataset.moviePoster || '',
+            release_date: button.dataset.movieDate || '',
+            vote_average: parseFloat(button.dataset.movieRating || '0')
+        };
+
+        if (action === 'add-to-list') {
+            // Disparar evento para abrir el modal de listas
+            window.dispatchEvent(new CustomEvent('open-list-modal', { 
+                detail: { movie: movieData }
+            }));
+        } else if (action === 'mark-as-watched') {
+            // Agregar directamente al diario
+            try {
+                const existingDiary: DiaryEntry[] = JSON.parse(localStorage.getItem('movieDiary') || '[]');
+                
+                // Verificar si ya está en el diario
+                const alreadyExists = existingDiary.some((entry: DiaryEntry) => entry.movieId === movieData.id);
+                
+                if (alreadyExists) {
+                    alert('Esta película ya está en tu diario');
+                    return;
+                }
+
+                const newEntry: DiaryEntry = {
+                    id: Date.now(),
+                    movieId: movieData.id,
+                    title: movieData.title,
+                    posterPath: movieData.poster_path,
+                    releaseDate: movieData.release_date,
+                    watchedDate: new Date().toISOString().split('T')[0],
+                    rating: 0,
+                    review: '',
+                    liked: false
+                };
+
+                existingDiary.push(newEntry);
+                localStorage.setItem('movieDiary', JSON.stringify(existingDiary));
+                
+                // Cambiar el icono temporalmente para feedback visual
+                const icon = button.querySelector('svg');
+                if (icon) {
+                    const originalIcon = icon.innerHTML;
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+                    button.classList.add('bg-green-600');
+                    
+                    setTimeout(() => {
+                        icon.innerHTML = originalIcon;
+                        button.classList.remove('bg-green-600');
+                    }, 1000);
+                }
+
+                // Disparar evento para actualizar el diario si está abierto
+                window.dispatchEvent(new CustomEvent('diary-updated'));
+                
+            } catch (error) {
+                console.error('Error al marcar como vista:', error);
+                alert('Error al agregar al diario');
+            }
+        }
+    });
+</script>

@@ -1,0 +1,92 @@
+---
+// Importa tu Layout base. Ajusta la ruta si es necesario 
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro'; 
+import ListManager from '../islas/ListManager.jsx';
+// Asumiendo que tu Layout principal se llama Layout.astro y está en '../layouts/'
+
+// Importa tus íconos SVG si los tienes en un archivo separado, o usa los de Tailwind/Heroicons
+---
+
+<Layout title="Acerca de Nosotros | Your Directory">
+ <Navbar />
+    
+    <div class="container mx-auto py-16 px-4">
+        
+        <header class="text-center mb-16">
+            <p class="text-accent-purple-light text-xl font-semibold mb-3">
+                Nuestra Historia
+            </p>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight">
+                La Plataforma que <span class="text-accent-purple-light">Recuerda por Ti</span>
+            </h1>
+            <p class="mt-6 text-gray-400 max-w-3xl mx-auto text-lg">
+                Your Directory nació de la frustración de olvidar qué películas y series habíamos visto, calificado, o qué queríamos recomendar. Somos el diario digital que te ayuda a catalogar tu vida cinematográfica de manera personal y organizada.
+            </p>
+        </header>
+
+        <section class="grid md:grid-cols-3 gap-8 text-center mb-20">
+            
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border-t-4 border-accent-purple-dark hover:border-accent-purple-light transition-all duration-300">
+                <div class="flex justify-center mb-4">
+                    <svg class="w-10 h-10 text-accent-purple-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Diario Privado</h3>
+                <p class="text-gray-400">Tus listas, calificaciones y comentarios son solo tuyos. Gestiona tu *Watchlist* (simulación de Stock) y tus colecciones con total privacidad.</p>
+            </div>
+
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border-t-4 border-accent-purple-dark hover:border-accent-purple-light transition-all duration-300">
+                <div class="flex justify-center mb-4">
+                    <svg class="w-10 h-10 text-accent-purple-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7V4a2 2 0 012-2h12a2 2 0 012 2v3m-8 6h.01M4 17v-1.618a2 2 0 01.383-1.07l2.955-3.328A2 2 0 019.467 9h5.066a2 2 0 011.628.892l2.955 3.328A2 2 0 0120 15.382V17h-16z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Datos en Tus Manos</h3>
+                <p class="text-gray-400">Usamos **LocalStorage** para asegurar que tu información (listas, ratings) esté guardada en tu propio navegador. Rápido, offline y persistente.</p>
+            </div>
+
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border-t-4 border-accent-purple-dark hover:border-accent-purple-light transition-all duration-300">
+                <div class="flex justify-center mb-4">
+                    <svg class="w-10 h-10 text-accent-purple-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Rendimiento Extremo</h3>
+                <p class="text-gray-400">Construido sobre **Astro**, **React (Islas)** y **GSAP** para una carga ultrarrápida y animaciones fluidas, como la del botón de navegación rápida.</p>
+            </div>
+        </section>
+
+        <section class="bg-gray-900 p-10 rounded-xl shadow-inner max-w-5xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                Tecnología Detrás del Directorio
+            </h2>
+            <p class="text-gray-400 text-center mb-8">
+                El proyecto fue concebido como una demostración de arquitectura web moderna, combinando la velocidad estática con la interactividad dinámica.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-x-12 gap-y-6 text-gray-300">
+                <div>
+                    <h4 class="font-bold text-accent-purple-light mb-2">Astro y Arquitectura de Islas</h4>
+                    <ul class="list-disc list-inside space-y-1 ml-4 text-sm">
+                        <li>El *Layout* y las páginas base son estáticas y rápidas.</li>
+                        <li>**Islas de React** (`ListManager.jsx`) manejan el estado del usuario.</li>
+                        <li>Componentes dinámicos (como el mapa Leaflet en `/locations`) se cargan solo cuando son necesarios.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-accent-purple-light mb-2">Datos y Persistencia</h4>
+                    <ul class="list-disc list-inside space-y-1 ml-4 text-sm">
+                        <li>Integración **Server-Side** con la API de **TMDB** para las sugerencias de la Home.</li>
+                        <li>Persistencia de datos del Diario del usuario en **LocalStorage** (simulación de Stock/Carrito).</li>
+                        <li>Uso de **GSAP ScrollTrigger** para animaciones limpias y basadas en desplazamiento.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</Layout>

@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import MapClient from '../islas/MapClient.jsx'; // Importamos el mapa
+---
+
+<Layout title="Mapa de Rodajes - Your Directory">
+  <Navbar />
+  
+  <div class="min-h-screen bg-[#14181c] pt-12 pb-20 px-4 font-sans">
+    <div class="max-w-6xl mx-auto">
+      
+      <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-white mb-3">
+            Mapa de <span class="text-[#92f6df]">Rodajes</span> 🌍
+        </h1>
+        <p class="text-gray-400">
+            Explora las localizaciones reales de tus películas y series favoritas.
+        </p>
+      </div>
+
+      <MapClient client:only="react" />
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+        <div class="bg-[#1B2228] p-4 rounded-lg border border-gray-800">
+            <h3 class="text-[#00E054] font-bold mb-2">✈️ Viaja desde casa</h3>
+            <p class="text-sm text-gray-400">Haz zoom y navega por el mundo para descubrir dónde se filmaron las escenas icónicas.</p>
+        </div>
+        <div class="bg-[#1B2228] p-4 rounded-lg border border-gray-800">
+            <h3 class="text-[#ba87d0] font-bold mb-2">📍 Marcadores</h3>
+            <p class="text-sm text-gray-400">Haz clic en los marcadores azules para ver qué película se rodó allí y una pequeña descripción.</p>
+        </div>
+        <div class="bg-[#1B2228] p-4 rounded-lg border border-gray-800">
+            <h3 class="text-[#92f6df] font-bold mb-2">🎬 Base de Datos</h3>
+            <p class="text-sm text-gray-400">Actualizamos constantemente con nuevas localizaciones descubiertas por la comunidad.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</Layout>

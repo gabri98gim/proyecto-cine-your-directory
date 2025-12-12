@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import ListsClient from '../islas/ListsClient.jsx'; // Importamos la nueva isla
+---
+
+<Layout title="Listas - Your Directory">
+  <Navbar />
+  
+  <div class="min-h-screen bg-[#14181c] pt-12 pb-20 px-4 font-sans">
+    <div class="max-w-5xl mx-auto">
+      
+      <ListsClient client:load />
+      
+    </div>
+  </div>
+</Layout>

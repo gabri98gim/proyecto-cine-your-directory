@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import DiaryClient from '../components/DiaryClient.jsx';
+---
+
+<Layout title="Diario - Your Directory">
+  <Navbar />
+  <div style="min-height: 100vh; background-color: #14181c; padding-top: 48px; padding-bottom: 48px; padding-left: 16px; padding-right: 16px;">
+    <div style="max-width: 1200px; margin: 0 auto 32px; text-align: center;">
+      <h1 style="font-size: 48px; color: #fff; margin: 0 0 8px 0;">Diario</h1>
+      <p style="color: #9ca3af; font-size: 16px;">Tu historial de películas vistas y puntuaciones</p>
+    </div>
+
+    <!-- Client component para cargar datos de localStorage y mostrar el diario -->
+    <DiaryClient client:load />
+  </div>
+</Layout>

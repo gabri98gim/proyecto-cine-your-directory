@@ -1,0 +1,29 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Welcome from '../components/Welcome.astro';
+import Layout from '../layouts/Layout.astro';
+import '../styles/global.css';
+import { getPopularMovies } from '../services/tmdb';
+
+// Obtener populares para la vista preliminar en el hero
+const TMDB_API_KEY = import.meta.env.PUBLIC_TMDB_API_KEY;
+let popularMovies = null;
+if (TMDB_API_KEY) {
+  try {
+    popularMovies = await getPopularMovies(TMDB_API_KEY);
+  } catch (e) {
+    console.error('Error cargando películas populares:', e);
+  }
+}
+---
+
+<Layout>
+    <Navbar />
+    <Welcome movies={popularMovies?.results?.slice(0, 18) ?? []} />
+
+    <script type="module">
+        import('/src/components/hero-gsap.js').then(m => {
+            if (m?.default) m.default();
+        }).catch(e => console.error('Failed to load hero-gsap:', e));
+    </script>
+</Layout>

@@ -1,0 +1,209 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import MovieCard from '../components/MovieCard.astro';
+import { searchMovies } from '../services/tmdb';
+
+// Obtener la API Key desde las variables de entorno
+const TMDB_API_KEY = import.meta.env.PUBLIC_TMDB_API_KEY;
+
+// DEBUG: Verificar si la API Key existe
+console.log('API Key existe?', !!TMDB_API_KEY);
+console.log('Primeros 10 caracteres:', TMDB_API_KEY?.substring(0, 10));
+
+// Obtener el query de búsqueda de la URL
+const query = Astro.url.searchParams.get('q') || '';
+const page = parseInt(Astro.url.searchParams.get('page') || '1');
+
+console.log('Query recibido:', query);
+console.log('Está buscando?', !!query.trim());
+
+// Buscar películas solo si hay un query
+let searchResults = null;
+let error = null;
+let isSearching = false;
+
+if (query.trim() && TMDB_API_KEY) {
+  isSearching = true;
+  console.log('Iniciando búsqueda para:', query);
+  try {
+    searchResults = await searchMovies(query, TMDB_API_KEY, page);
+    console.log('Resultados encontrados:', searchResults.results.length);
+    console.log('Total de resultados:', searchResults.total_results);
+  } catch (e) {
+    console.error('Error completo:', e);
+    error = `Error al buscar películas: ${e instanceof Error ? e.message : String(e)}`;
+  }
+} else if (query.trim() && !TMDB_API_KEY) {
+  console.error('API Key no encontrada!');
+  error = 'API Key no configurada. Por favor, configura TMDB_API_KEY en tu archivo .env';
+} else {
+  console.log('No hay query de búsqueda');
+}
+---
+
+<Layout title={query ? `Resultados para "${query}"` : 'Búsqueda - Your Directory'}>
+  <Navbar />
+  <div class="min-h-screen py-12 px-4">
+    <div class="container mx-auto max-w-7xl">
+      
+      <!-- Header con formulario de búsqueda -->
+      <div class="mb-12">
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-6">
+          {query ? `Resultados para "${query}"` : 'Buscar Películas'}
+        </h1>
+        
+        <!-- Formulario de búsqueda mejorado -->
+        <form action="/search" method="get" class="max-w-2xl" onsubmit="if(!document.querySelector('input[name=q]').value.trim()) { event.preventDefault(); alert('Por favor ingresa un término de búsqueda'); }">
+          <div class="relative">
+            <input
+              type="search"
+              name="q"
+              value={query}
+              placeholder="Buscar películas, series, actores..."
+              class="w-full py-4 pl-12 pr-4 rounded-lg bg-[#2c3440] text-white border border-gray-700 focus:outline-none focus:border-accent-purple-light text-lg placeholder-gray-500"
+              autofocus
+            />
+            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <button
+              type="submit"
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-accent-purple-dark hover:bg-accent-purple-light text-white px-6 py-2 rounded-md font-medium transition duration-150"
+            >
+              Buscar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Resultados -->
+      {error ? (
+        <!-- Error -->
+        <div class="bg-red-900 bg-opacity-20 border border-red-800 rounded-lg p-8 text-center">
+          <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h2 class="text-xl font-bold text-white mb-2">Error en la búsqueda</h2>
+          <p class="text-gray-400">{error}</p>
+        </div>
+      ) : !isSearching ? (
+        <!-- Sin búsqueda -->
+        <div class="text-center py-16">
+          <svg class="w-24 h-24 text-gray-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <h2 class="text-2xl font-bold text-white mb-3">Busca tu película favorita</h2>
+          <p class="text-gray-400 mb-8">Escribe el nombre de una película, serie o actor en el buscador</p>
+          
+          <!-- Sugerencias -->
+          <div class="max-w-md mx-auto">
+            <p class="text-gray-500 text-sm mb-3">Búsquedas sugeridas:</p>
+            <div class="flex flex-wrap gap-2 justify-center">
+              {['Dracula', 'The Matrix', 'Inception', 'Interstellar', 'Parasite'].map(suggestion => (
+                <a
+                  href={`/search?q=${encodeURIComponent(suggestion)}`}
+                  class="px-4 py-2 bg-[#2c3440] text-gray-300 rounded-full hover:bg-accent-purple-dark hover:text-white transition duration-150 text-sm"
+                >
+                  {suggestion}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : searchResults && searchResults.results.length > 0 ? (
+        <!-- Resultados encontrados -->
+        <div>
+          <div class="mb-6">
+            <p class="text-gray-400">
+              Se encontraron <span class="text-white font-bold">{searchResults.total_results}</span> resultados
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {searchResults.results.map(movie => (
+              <MovieCard
+                id={movie.id}
+                title={movie.title}
+                posterPath={movie.poster_path}
+                releaseDate={movie.release_date}
+                voteAverage={movie.vote_average}
+              />
+            ))}
+          </div>
+
+          <!-- Paginación -->
+          {searchResults.total_pages > 1 && (
+            <div class="flex justify-center gap-2 mt-12">
+              {page > 1 && (
+                <a
+                  href={`/search?q=${encodeURIComponent(query)}&page=${page - 1}`}
+                  class="px-4 py-2 bg-[#2c3440] text-white rounded-md hover:bg-accent-purple-dark transition duration-150"
+                >
+                  ← Anterior
+                </a>
+              )}
+              
+              <span class="px-4 py-2 bg-accent-purple-dark text-white rounded-md">
+                Página {page} de {Math.min(searchResults.total_pages, 500)}
+              </span>
+              
+              {page < searchResults.total_pages && page < 500 && (
+                <a
+                  href={`/search?q=${encodeURIComponent(query)}&page=${page + 1}`}
+                  class="px-4 py-2 bg-[#2c3440] text-white rounded-md hover:bg-accent-purple-dark transition duration-150"
+                >
+                  Siguiente →
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <!-- No se encontraron resultados -->
+        <div class="text-center py-16">
+          <svg class="w-24 h-24 text-gray-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h2 class="text-2xl font-bold text-white mb-3">No se encontraron resultados</h2>
+          <p class="text-gray-400 mb-6">
+            No pudimos encontrar ninguna película para "<span class="text-white font-medium">{query}</span>"
+          </p>
+          <div class="space-y-4 max-w-md mx-auto">
+            <p class="text-gray-500 text-sm">Sugerencias:</p>
+            <ul class="text-gray-400 text-sm space-y-2">
+              <li>• Verifica que el nombre esté escrito correctamente</li>
+              <li>• Intenta con palabras más generales</li>
+              <li>• Prueba con el título en inglés</li>
+            </ul>
+            <a
+              href="/search"
+              class="inline-block px-6 py-3 bg-accent-purple-dark hover:bg-accent-purple-light text-white rounded-lg font-medium transition duration-150 mt-6"
+            >
+              Nueva búsqueda
+            </a>
+          </div>
+        </div>
+      )}
+
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Animación para los resultados */
+  .grid > * {
+    animation: fadeIn 0.4s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
