@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'yourDirectoryUserData';
-const IMAGE_BASE = "https://image.tmdb.org/t/p/w92"; // Pósters pequeños
+const IMAGE_BASE = "https://image.tmdb.org/t/p/w92";
 
 export default function DiaryClient() {
   const [entries, setEntries] = useState([]);
@@ -18,63 +18,15 @@ export default function DiaryClient() {
       }
     }
 
-    // DATOS DE EJEMPLO (Mock Data) con URLs REALES de TMDB
+    // DATOS DE EJEMPLO SI NO HAY NADA
     if (loadedMovies.length === 0) {
         loadedMovies = [
-            { 
-                id: 101, 
-                title: "Barbie as The Princess & the Pauper", 
-                year: 2004, 
-                rating: 0, 
-                liked: true, 
-                watchedDate: "2025-12-10", 
-                poster_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Wsv_6gBBs1t61VRqaiAupX0_9JMUNmK6NA&s" // URL corregida
-            },
-            { 
-                id: 102, 
-                title: "The Matrix", 
-                year: 1999, 
-                rating: 4.5, 
-                liked: true, 
-                watchedDate: "2025-12-09", 
-                poster_path: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg" // URL correcta
-            },
-            { 
-                id: 103, 
-                title: "Dune: Part Two", // Cambiado por Dune para asegurar foto HD
-                year: 2024, 
-                rating: 5, 
-                liked: true, 
-                watchedDate: "2025-12-09", 
-                poster_path: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg" // URL correcta
-            },
-            { 
-                id: 104, 
-                title: "Barbie of Swan Lake", 
-                year: 2003, 
-                rating: 3, 
-                liked: false, 
-                watchedDate: "2025-12-07", 
-                poster_path: "https://pics.filmaffinity.com/barbie_of_swan_lake-741273957-large.jpg" // URL corregida
-            },
-            { 
-                id: 105, 
-                title: "Wicked", 
-                year: 2024, 
-                rating: 2.5, 
-                liked: false, 
-                watchedDate: "2025-11-20", 
-                poster_path: "https://m.media-amazon.com/images/I/913cbI9-KrL._AC_UF894,1000_QL80_.jpg" // URL corregida
-            },
-            { 
-                id: 106, 
-                title: "Some Like It Hot", 
-                year: 1959, 
-                rating: 5, 
-                liked: true, 
-                watchedDate: "2025-11-08", 
-                poster_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzL_yRIMXf9I-eVG940JgAKqnRPHPM6tzICA&s" // URL correcta
-            },
+            { id: 101, title: "Barbie as The Princess & the Pauper", year: 2004, rating: 0, liked: true, watchedDate: "2025-12-10", poster_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Wsv_6gBBs1t61VRqaiAupX0_9JMUNmK6NA&s" },
+            { id: 102, title: "The Matrix", year: 1999, rating: 4.5, liked: true, watchedDate: "2025-12-09", poster_path: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg" },
+            { id: 103, title: "Dune: Part Two", year: 2024, rating: 5, liked: true, watchedDate: "2025-12-09", poster_path: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg" },
+            { id: 104, title: "Barbie of Swan Lake", year: 2003, rating: 3, liked: false, watchedDate: "2025-12-07", poster_path: "https://pics.filmaffinity.com/barbie_of_swan_lake-741273957-large.jpg" },
+            { id: 105, title: "Wicked", year: 2024, rating: 2.5, liked: false, watchedDate: "2025-11-20", poster_path: "https://m.media-amazon.com/images/I/913cbI9-KrL._AC_UF894,1000_QL80_.jpg" },
+            { id: 106, title: "Some Like It Hot", year: 1959, rating: 5, liked: true, watchedDate: "2025-11-08", poster_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzL_yRIMXf9I-eVG940JgAKqnRPHPM6tzICA&s" },
         ];
     }
     
@@ -82,14 +34,13 @@ export default function DiaryClient() {
     setIsLoaded(true);
   }, []);
 
-  // Función para renderizar estrellas (VERDE INTACTO #00E054)
   const renderStars = (rating) => {
     if (!rating) return null;
     const stars = [];
     for (let i = 0; i < Math.floor(rating); i++) {
-        stars.push(<span key={i} className="text-[#00E054] text-lg">★</span>);
+        stars.push(<span key={i} className="text-[#00E054] text-sm md:text-lg">★</span>);
     }
-    if (rating % 1 !== 0) stars.push(<span key="half" className="text-[#00E054] text-lg">½</span>);
+    if (rating % 1 !== 0) stars.push(<span key="half" className="text-[#00E054] text-sm md:text-lg">½</span>);
     return stars;
   };
 
@@ -100,13 +51,22 @@ export default function DiaryClient() {
   return (
     <div className="w-full text-left font-sans">
       
-      {/* Encabezado */}
-      <div className="grid grid-cols-12 gap-4 text-xs tracking-wider text-gray-500 border-b border-gray-800 pb-2 mb-4 uppercase">
-        <div className="col-span-2 md:col-span-1 text-center">Month</div>
-        <div className="col-span-1 text-center">Day</div>
-        <div className="col-span-6 md:col-span-7">Film</div>
-        <div className="col-span-1 text-right">Released</div>
-        <div className="col-span-1 text-center">Rating</div>
+      {/* --- ENCABEZADO --- */}
+      <div className="grid grid-cols-12 gap-2 md:gap-4 text-xs tracking-wider text-gray-500 border-b border-gray-800 pb-2 mb-4 uppercase">
+        {/* Ocultamos Month/Day en móvil */}
+        <div className="hidden md:block md:col-span-1 text-center">Month</div>
+        <div className="hidden md:block md:col-span-1 text-center">Day</div>
+        
+        {/* En móvil, Film ocupa casi todo (8 columnas) */}
+        <div className="col-span-8 md:col-span-7">Film</div>
+        
+        {/* Ocultamos Año en móvil */}
+        <div className="hidden md:block md:col-span-1 text-right">Released</div>
+        
+        {/* Rating ocupa más espacio en móvil (3 cols) para que quepan las estrellas */}
+        <div className="col-span-3 md:col-span-1 text-center">Rating</div>
+        
+        {/* Like ocupa 1 col */}
         <div className="col-span-1 text-center">Like</div>
       </div>
 
@@ -121,10 +81,10 @@ export default function DiaryClient() {
             if (showMonthBlock) lastMonth = currentMonth;
 
             return (
-                <div key={movie.id} className="group grid grid-cols-12 gap-4 items-center py-3 border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
+                <div key={movie.id} className="group grid grid-cols-12 gap-2 md:gap-4 items-center py-3 border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
                     
-                    {/* 1. Columna MES: TURQUESA (#92f6df) */}
-                    <div className="col-span-2 md:col-span-1 flex justify-center">
+                    {/* 1. Columna MES (Solo Desktop) */}
+                    <div className="hidden md:flex md:col-span-1 justify-center">
                         {showMonthBlock && (
                             <div className="bg-[#2c3440] rounded-md p-1 w-12 text-center shadow-inner border border-gray-700">
                                 <div className="text-[10px] text-[#92f6df] uppercase tracking-tighter leading-none font-bold">
@@ -135,41 +95,41 @@ export default function DiaryClient() {
                         )}
                     </div>
 
-                    {/* 2. Columna DÍA */}
-                    <div className="col-span-1 text-center text-xl text-gray-400 font-light font-mono">
+                    {/* 2. Columna DÍA (Solo Desktop) */}
+                    <div className="hidden md:block md:col-span-1 text-center text-xl text-gray-400 font-light font-mono">
                         {day}
                     </div>
 
-                    {/* 3. Columna PELÍCULA */}
-                    <div className="col-span-6 md:col-span-7 flex items-center space-x-4">
-                        {/* Hover de borde: Verde */}
-                        <div className="shrink-0 w-9 h-14 bg-gray-700 rounded overflow-hidden shadow-sm border border-gray-700 group-hover:border-[#00E054] transition-colors">
+                    {/* 3. Columna PELÍCULA (Responsiva) */}
+                    {/* En móvil ocupa 8 de 12 columnas. En PC ocupa 7 de 12 */}
+                    <div className="col-span-8 md:col-span-7 flex items-center space-x-3 md:space-x-4">
+                        <div className="shrink-0 w-8 h-12 md:w-9 md:h-14 bg-gray-700 rounded overflow-hidden shadow-sm border border-gray-700 group-hover:border-[#00E054] transition-colors">
                              {movie.poster_path ? (
                                 <img src={movie.poster_path.startsWith('http') ? movie.poster_path : `${IMAGE_BASE}${movie.poster_path}`} alt={movie.title} className="w-full h-full object-cover" />
                              ) : (
                                 <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-500">NO IMG</div>
                              )}
                         </div>
-                        {/* Hover de título: Verde */}
-                        <h3 className="text-white font-bold text-base md:text-lg truncate tracking-tight group-hover:text-[#00E054] transition-colors cursor-pointer">
+                        <h3 className="text-white font-bold text-sm md:text-lg leading-tight truncate group-hover:text-[#00E054] transition-colors cursor-pointer">
                             {movie.title}
                         </h3>
                     </div>
 
-                    {/* 4. Columna AÑO */}
-                    <div className="col-span-1 text-right text-sm text-gray-500">
+                    {/* 4. Columna AÑO (Solo Desktop) */}
+                    <div className="hidden md:block md:col-span-1 text-right text-sm text-gray-500">
                         {movie.year}
                     </div>
 
-                    {/* 5. Columna RATING (Verde) */}
-                    <div className="col-span-1 flex justify-center items-center space-x-0.5 min-w-[60px]">
+                    {/* 5. Columna RATING */}
+                    {/* En móvil ocupa 3 columnas, en PC ocupa 1 */}
+                    <div className="col-span-3 md:col-span-1 flex justify-center items-center space-x-0.5">
                         {renderStars(movie.rating)}
                     </div>
 
-                    {/* 6. Columna LIKE: LILA (#ba87d0) */}
+                    {/* 6. Columna LIKE */}
                     <div className="col-span-1 flex justify-center">
                         {movie.liked && (
-                            <svg className="w-5 h-5 text-[#ba87d0] fill-current" viewBox="0 0 20 20">
+                            <svg className="w-4 h-4 md:w-5 md:h-5 text-[#ba87d0] fill-current" viewBox="0 0 20 20">
                                 <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
                             </svg>
                         )}
