@@ -19,6 +19,21 @@ export interface MovieDetails extends Movie {
   runtime: number;
   genres: { id: number; name: string }[];
   tagline: string;
+  status: string;
+  revenue: number;
+  budget: number;
+}
+
+export interface Cast {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+}
+
+export interface MovieCredits {
+  id: number;
+  cast: Cast[];
 }
 
 export interface TMDBResponse {
@@ -75,6 +90,11 @@ export async function searchMovies(query: string, apiKey: string, page: number =
 // Obtener detalles de una película
 export async function getMovieDetails(movieId: number, apiKey: string): Promise<MovieDetails> {
   return fetchTMDB<MovieDetails>(`/movie/${movieId}`, apiKey);
+}
+
+// Obtener créditos de la película (actores)
+export async function getMovieCredits(movieId: number, apiKey: string): Promise<MovieCredits> {
+  return fetchTMDB<MovieCredits>(`/movie/${movieId}/credits`, apiKey);
 }
 
 // Obtener películas por género

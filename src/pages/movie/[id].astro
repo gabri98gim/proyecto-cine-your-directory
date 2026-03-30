@@ -1,0 +1,350 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import {
+  getMovieDetails,
+  getMovieCredits,
+  getImageUrl,
+} from "../../services/tmdb";
+
+const { id } = Astro.params;
+const TMDB_API_KEY = import.meta.env.PUBLIC_TMDB_API_KEY;
+
+let movie = null;
+let credits = null;
+let error = null;
+
+try {
+  if (!id) throw new Error("ID de película no proporcionado");
+  movie = await getMovieDetails(parseInt(id), TMDB_API_KEY);
+  credits = await getMovieCredits(parseInt(id), TMDB_API_KEY);
+} catch (e) {
+  console.error("Error fetching movie details:", e);
+  error =
+    "No se pudo cargar la información de la película. O la película no existe o hay un problema de conexión.";
+}
+
+// Formatear la duración
+const formatRuntime = (minutes: number) => {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h}h ${m}m`;
+};
+
+const backdropUrl = movie?.backdrop_path
+  ? getImageUrl(movie.backdrop_path, "original")
+  : "";
+const posterUrl = movie?.poster_path
+  ? getImageUrl(movie.poster_path, "w500")
+  : "";
+const year = movie?.release_date
+  ? new Date(movie.release_date).getFullYear()
+  : "N/A";
+const rating = movie?.vote_average
+  ? (movie.vote_average / 2).toFixed(1)
+  : "0.0";
+
+// Obtener director si existe
+const director =
+  credits?.cast?.find(
+    (c) =>
+      c.character?.toLowerCase().includes("director") || c.name === "Director",
+  ) || null;
+// Tomamos el cast real limitando a 10
+const mainCast = credits?.cast?.slice(0, 10) || [];
+---
+
+<Layout>
+  <Navbar />
+
+  {
+    error ? (
+      <div class="min-h-screen flex items-center justify-center text-white">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-red-500 mb-4">Error 404</h1>
+          <p>{error}</p>
+          <a
+            href="/"
+            class="mt-8 inline-block bg-accent-purple text-white px-6 py-2 rounded-md hover:bg-accent-purple-light transition-colors"
+          >
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+    ) : (
+      <main class="min-h-screen bg-bg-dark text-white pb-20">
+        {/* Banner */}
+        <div class="relative h-[60vh] md:h-[70vh] w-full">
+          <div class="absolute inset-0 bg-linear-to-t from-bg-dark via-bg-dark/80 to-transparent z-10" />
+          {backdropUrl && (
+            <img
+              src={backdropUrl}
+              alt={`Backdrop de ${movie?.title}`}
+              class="w-full h-full object-cover object-top opacity-50"
+            />
+          )}
+
+          {/* Contenido principal sobre el banner */}
+          <div class="absolute bottom-0 left-0 w-full z-20 px-4 md:px-12 lg:px-24 xl:px-32 transform translate-y-1/3 md:translate-y-1/4 flex flex-col md:flex-row gap-8 items-end md:items-start">
+            {/* Poster y Botones */}
+            <div class="shrink-0 w-48 md:w-64 relative group">
+              <img
+                src={posterUrl}
+                alt={`Poster de ${movie?.title}`}
+                class="w-full rounded-lg shadow-2xl shadow-black/50 border-2 border-gray-800"
+              />
+              {/* Botones Flotantes de acción */}
+              <div class="absolute top-2 left-2 flex gap-2 z-30">
+                <button
+                  class="bg-black/80 hover:bg-black text-white p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-gray-600 hover:border-accent-purple-light group/btn relative"
+                  title="Agregar a lista"
+                >
+                  <svg
+                    class="w-5 h-5 text-white group-hover/btn:text-accent-purple-light transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="bg-black/80 hover:bg-black text-white p-3 rounded-full transition-all duration-300 hover:scale-110 shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-gray-600 hover:border-green-400 group/btn relative"
+                  title="Marcar como vista"
+                >
+                  <svg
+                    class="w-5 h-5 text-white group-hover/btn:text-green-400 transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Info Principal */}
+            <div class="flex-1 pb-4 md:pb-0 md:pt-16 max-w-4xl text-center md:text-left drop-shadow-lg">
+              <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-2 text-white">
+                {movie?.title}
+              </h1>
+              {movie?.tagline && (
+                <p class="text-xl md:text-2xl text-accent-purple-light italic opacity-90 mb-4 font-light">
+                  "{movie.tagline}"
+                </p>
+              )}
+
+              <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-5 text-sm md:text-base text-gray-300 font-medium mb-6">
+                <span class="bg-gray-800/80 px-3 py-1 rounded-md border border-gray-700">
+                  {year}
+                </span>
+                <span class="flex items-center gap-1 bg-gray-800/80 px-3 py-1 rounded-md border border-gray-700">
+                  <svg
+                    class="w-4 h-4 text-yellow-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  {rating} / 5
+                </span>
+                <span class="bg-gray-800/80 px-3 py-1 rounded-md border border-gray-700">
+                  {formatRuntime(movie?.runtime || 0)}
+                </span>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-6">
+                {movie?.genres?.map((g: any) => (
+                  <span class="px-3 py-1 rounded-full bg-accent-purple/20 text-accent-purple-light text-xs font-semibold border border-accent-purple/30">
+                    {g.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Espaciador para compensar el translateY del poster */}
+        <div class="h-48 md:h-12 lg:h-24" />
+
+        {/* Main Content Area */}
+        <div class="max-w-7xl mx-auto px-4 md:px-12 lg:px-24 mt-8 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-12">
+          {/* Columna Izquierda: Sinopsis */}
+          <div class="md:col-span-2 space-y-10">
+            <section>
+              <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 border-b border-gray-800 pb-2">
+                <span class="bg-accent-purple p-1 rounded">
+                  <svg
+                    class="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </span>
+                Sinopsis
+              </h2>
+              <p class="text-gray-300 text-lg leading-relaxed text-balance">
+                {movie?.overview ||
+                  "No hay sinopsis disponible para esta película."}
+              </p>
+            </section>
+
+            {/* Elenco */}
+            <section>
+              <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 border-b border-gray-800 pb-2">
+                <span class="bg-accent-purple p-1 rounded">
+                  <svg
+                    class="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                </span>
+                Elenco Principal
+              </h2>
+
+              {mainCast.length > 0 ? (
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {mainCast.map((actor: any) => (
+                    <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-accent-purple/50 transition-colors group">
+                      <div class="aspect-square bg-gray-800">
+                        {actor.profile_path ? (
+                          <img
+                            src={getImageUrl(actor.profile_path, "w200")}
+                            alt={actor.name}
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div class="w-full h-full flex items-center justify-center text-gray-500">
+                            <svg
+                              class="w-12 h-12"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div class="p-3 text-center">
+                        <p
+                          class="font-bold text-sm text-gray-100 line-clamp-1"
+                          title={actor.name}
+                        >
+                          {actor.name}
+                        </p>
+                        <p
+                          class="text-xs text-accent-purple-light mt-1 line-clamp-2"
+                          title={actor.character}
+                        >
+                          {actor.character}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p class="text-gray-400 italic">
+                  Información de elenco no disponible.
+                </p>
+              )}
+            </section>
+          </div>
+
+          {/* Columna Derecha: Detalles Adicionales */}
+          <div class="space-y-6">
+            <div class="bg-gray-900/50 rounded-xl p-6 border border-gray-800">
+              <h3 class="text-lg font-bold mb-4 border-b border-gray-800 pb-2 text-accent-purple-light">
+                Información
+              </h3>
+
+              <dl class="space-y-4 text-sm">
+                <div>
+                  <dt class="text-gray-500 font-medium">Estado</dt>
+                  <dd class="text-white font-semibold mt-1">
+                    {movie?.status || "Desconocido"}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-gray-500 font-medium">Fecha de Estreno</dt>
+                  <dd class="text-white font-semibold mt-1">
+                    {movie?.release_date
+                      ? new Date(movie.release_date).toLocaleDateString(
+                          "es-ES",
+                          { day: "numeric", month: "long", year: "numeric" },
+                        )
+                      : "N/A"}
+                  </dd>
+                </div>
+
+                {movie?.budget ? (
+                  <div>
+                    <dt class="text-gray-500 font-medium">Presupuesto</dt>
+                    <dd class="text-white font-semibold mt-1">
+                      ${(movie.budget / 1000000).toFixed(1)}M
+                    </dd>
+                  </div>
+                ) : null}
+
+                {movie?.revenue ? (
+                  <div>
+                    <dt class="text-gray-500 font-medium">Recaudación</dt>
+                    <dd class="text-white font-semibold mt-1">
+                      ${(movie.revenue / 1000000).toFixed(1)}M
+                    </dd>
+                  </div>
+                ) : null}
+
+                {director && (
+                  <div>
+                    <dt class="text-gray-500 font-medium">Director</dt>
+                    <dd class="text-white font-semibold mt-1">
+                      {director.name}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
+        </div>
+      </main>
+    )
+  }
+</Layout>
+
+<style>
+  /* Base styles to complement tailwind */
+  .text-balance {
+    text-wrap: balance;
+  }
+</style>
